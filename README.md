@@ -15,4 +15,4 @@ devtools::install_github("DulceC/fars")
 
 but why would you do that?
 
-[![](https://travis-ci.org/DulceC/fars.svg?branch=master)])(https://travis-ci.org/DulceC/fars) 
+[![](https://travis-ci.org/DulceC/fars.svg?branch=master)](https://travis-ci.org/DulceC/fars) 
