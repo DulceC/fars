@@ -1,0 +1,66 @@
+---
+title: "The fars package"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r  global_options, echo = FALSE}
+# To fix the following NOTE, issued when checking the package
+# The following directory looks like a leftover from 'knitr':
+#   'figure'
+# See https://github.com/rOpenGov/eurostat/issues/44
+knitr::opts_chunk$set(fig.path="fig/")
+```
+
+The `fars` package provides a series of functions to read, summarize and visualize [data](https://www-fars.nhtsa.dot.gov/Main/index.aspx) from the U.S. National Highway Traffic Safety Administration's Fatality Analysis Reporting System (FARS).  
+
+Building this package was an assignment of the Coursera course "Building R Packages", offered by Johns Hopkins University as part of their Specialization "Mastering Software Development in R". The functions in the package were provided as input for the assignment and have only been slightly altered. At this point, they are only able to access data provided in the `extdata` folder existing inside the installation directory of the `fars` package. Work in progress.
+
+## Functions provided and their usage
+
+```{r load_the_package, message = FALSE, echo = FALSE}
+library(fars)
+```
+
+The `fars` package provides the following five functions: 
+
+- `make_filename` 
+- `fars_read`
+- `fars_read_years`
+- `fars_summarize_years`
+- `fars_map_state`
+
+Functions `fars_read` will read in all the data in a FARS file, whereas  function `fars_read_years` will select only the month and year columns for each year passed as argument and return the result as a list of tibbles if more than one year is passed. Each row in the output represents an accident report. 
+
+```{r example_read, echo = FALSE}
+fars_read_years(2013)
+```  
+
+Function `make_filename` is a convenience function which systematically builds filenames for the FARS files from the year(s) provided as argument.
+
+Function `fars_summarize_years` can be used to obtain the monthly totals of the number of accidents occured in the U.S. in one or several years. For example, running `fars_summarize_years(c(2013, 2014, 2015))` would result in:  
+
+```{r example_summarize, echo = FALSE}
+fars_summarize_years(c(2013, 2014, 2015))
+```  
+
+Function `fars_map_state` may be used to plot the locations of accidents in a given state. For example, calling `fars_map_state(state.num = 12, year = 2014)` will show a map of the state of Florida with the locations of accidents reported in 2014 indicated by black dots. 
+
+```{r example_state_map, fig.show='hold'}
+fars_map_state(state.num = 12, year = 2014)
+```
+
+The variable `state.num` takes the numeric [FIPS code](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standard_state_code) of a U.S. state, which may also be found in the `state.fips` database provided in the `maps` package, which is partially shown below:
+
+```{r example_fips, echo = FALSE, results = "asis"}
+library(maps)
+data(state.fips)
+knitr::kable(head(state.fips, 10))
+```
+
+Note that this function may not be able to process all states in a given FARS file since it relies on the 48-state database provided by the `map` function in the `maps` package. For example, accident locations for the state of Hawaii, with `state.num = 15`, cannot be plotted; calling the function for this state will result in an error.
